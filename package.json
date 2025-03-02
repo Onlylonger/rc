@@ -22,13 +22,12 @@
       "import": "./dist/es/main.js",
       "types": "./dist/es/main.d.ts"
     },
-    "./style.css": "./dist/es/index.css"
+    "./style.css": "./dist/es/style.css"
   },
   "scripts": {
     "dev": "vite",
-    "dev:lib": "vite -c ./lib/vite.config.ts build -w",
     "build": "tsc -b && vite build",
-    "build:lib": "tsc --build ./lib && vite -c ./lib/vite.config.ts build",
+    "build:lib": "vite -c ./vite.config.lib.ts build",
     "lint": "eslint .",
     "preview": "vite preview",
     "publish": "pnpm build:lib"
@@ -76,7 +75,6 @@
     "@radix-ui/react-toggle": "^1.1.2",
     "@radix-ui/react-toggle-group": "^1.1.2",
     "@radix-ui/react-tooltip": "^1.1.8",
-    "@shilong/rc": "workspace:^",
     "@tailwindcss/vite": "^4.0.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -94,13 +92,14 @@
     "react-use": "^17.6.0",
     "recharts": "^2.15.1",
     "sonner": "^2.0.1",
+    "tailwind-merge": "^3.0.2",
     "vaul": "^1.1.2",
-    "zod": "^3.24.2",
-    "tailwind-merge": "^3.0.2"
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
-    "@tailwindcss/vite": "^4.0.8",
+    "@tailwindcss/postcss": "^4.0.9",
+    "@types/node": "^22.13.8",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "@vitejs/plugin-react": "^4.3.4",
@@ -108,6 +107,7 @@
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.18",
     "globals": "^15.14.0",
+    "postcss": "^8.5.3",
     "tailwindcss": "^4.0.9",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "~5.7.2",

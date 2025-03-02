@@ -1,4 +1,4 @@
-import "./index.css";
+import "./style.css";
 
 export * from "./components/ui/chart";
 export * from "./components/ui/accordion";
