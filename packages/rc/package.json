@@ -1,0 +1,87 @@
+{
+  "name": "@shilong/rc",
+  "private": false,
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "license": "MIT",
+  "author": "Barry",
+  "description": "React UI and relative utils",
+  "keywords": [
+    "react",
+    "react-component",
+    "ui",
+    "a11y",
+    "hooks"
+  ],
+  "version": "0.1.5",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/es/main.js",
+      "types": "./dist/es/main.d.ts"
+    },
+    "./icons": {
+      "import": "./dist/es/icons/index.js",
+      "types": "./dist/es/icons/index.d.ts"
+    },
+    "./dev": {
+      "import": "./src/main.ts"
+    },
+    "./dev/icons": {
+      "import": "./src/icons/index.ts"
+    },
+    "./dev/style.css": "./src/style.css",
+    "./style.css": "./dist/es/style.css"
+  },
+  "scripts": {
+    "dev": "vite build -w",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "peerDependencies": {
+    "@types/react": "^17 || ^18 || ^19",
+    "react": "^17 || ^18 || ^19",
+    "react-dom": "^17 || ^18 || ^19"
+  },
+  "peerDependenciesMeta": {
+    "@types/react": {
+      "optional": true
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "dependencies": {
+    "@floating-ui/react": "^0.27.5",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.476.0",
+    "sonner": "^2.0.1",
+    "vaul": "^1.1.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.19.0",
+    "@tailwindcss/vite": "^4.0.9",
+    "@types/node": "^22.13.8",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.19.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.18",
+    "globals": "^15.14.0",
+    "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "tailwindcss": "^4.0.9",
+    "tailwindcss-animate": "^1.0.7",
+    "typescript": "~5.7.2",
+    "typescript-eslint": "^8.22.0",
+    "vite": "^6.1.0",
+    "vite-bundle-analyzer": "^0.17.1",
+    "vite-plugin-dts": "^4.5.0"
+  }
+}
