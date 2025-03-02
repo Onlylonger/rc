@@ -9,7 +9,7 @@ export default defineConfig({
   plugins: [
     dts({
       outDir: resolve(__dirname, "dist/es"),
-      tsconfigPath: resolve(__dirname, "./tsconfig.json"),
+      tsconfigPath: resolve(__dirname, "./tsconfig.lib.json"),
     }),
     // https://github.com/vitejs/vite/issues/15012#issuecomment-1825035992
     // https://github.com/evanw/esbuild/issues/3548
@@ -38,4 +38,5 @@ export default defineConfig({
       },
     },
   },
+  css: {},
 });
