@@ -1,6 +1,9 @@
 @layer theme, base, components, utilities;
+
+@source "../node_modules/@shilong/rc/src";
+
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/preflight.css" layer(base);
 @import "tailwindcss/utilities.css" layer(utilities);
 
-@import "../shared/style.css";
+@import "@shilong/rc/dev/style.css";
