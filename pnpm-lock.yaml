@@ -206,6 +206,9 @@ importers:
       '@shilong/rc':
         specifier: workspace:^
         version: link:../rc
+      lucide-react:
+        specifier: ^0.476.0
+        version: 0.476.0(react@19.0.0)
       react:
         specifier: ^19.0.0
         version: 19.0.0

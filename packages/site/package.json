@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@shilong/rc": "workspace:^",
+    "lucide-react": "^0.476.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

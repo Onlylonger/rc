@@ -46,8 +46,7 @@
   },
   "files": [
     "dist",
-    "README.md",
-    "src"
+    "README.md"
   ],
   "dependencies": {
     "@hookform/resolvers": "^4.1.2",
