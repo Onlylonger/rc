@@ -39,8 +39,3 @@ export const muteWarningsPlugin = (warningCodes: string[]): Plugin => {
     },
   };
 };
-
-export const muteWarningsPluginInstance = muteWarningsPlugin([
-  "SOURCEMAP_ERROR",
-  "MODULE_LEVEL_DIRECTIVE",
-]);

@@ -6,7 +6,7 @@ import {
 } from "lucide-react";
 
 import { cn } from "../../utils";
-import { Button, buttonVariants } from "../button";
+import { Button, getButtonClassNames } from "../button";
 
 function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
   return (
@@ -54,7 +54,7 @@ function PaginationLink({
       data-slot="pagination-link"
       data-active={isActive}
       className={cn(
-        buttonVariants({
+        getButtonClassNames({
           variant: isActive ? "outline" : "ghost",
           size,
         }),

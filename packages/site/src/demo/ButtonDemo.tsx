@@ -1,4 +1,4 @@
-import { Button } from "@shilong/rc/dev";
+import { Button, getButtonClassNames } from "@shilong/rc/dev";
 import { ChevronRight, Loader2, MailOpen } from "lucide-react";
 
 export const ButtonDemo = () => {
@@ -21,8 +21,8 @@ export const ButtonDemo = () => {
         Please wait
       </Button>
       <Button
-        render={({ getVariantClx }) => {
-          const classNames = getVariantClx({
+        render={() => {
+          const classNames = getButtonClassNames({
             variant: "default",
             size: "default",
           });

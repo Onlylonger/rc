@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from "class-variance-authority";
 
-export const buttonVariants = cva(
+export const getButtonClassNames = cva(
   "inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-[color,box-shadow] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
   {
     variants: {
@@ -25,23 +25,24 @@ export const buttonVariants = cva(
     },
   }
 );
+export type ComponentRenderFn<Props, State> = (
+  props: Props,
+  state: State
+) => React.ReactElement<unknown>;
 
-type ButtonVariantsType = typeof buttonVariants;
-type ButtonVariantsProps = VariantProps<ButtonVariantsType>;
+type getButtonClassNamesType = typeof getButtonClassNames;
+type getButtonClassNamesProps = VariantProps<getButtonClassNamesType>;
 type ButtonProps = React.ComponentProps<"button"> &
-  ButtonVariantsProps & {
-    render?: (params: {
-      getVariantClx: ButtonVariantsType;
-    }) => React.JSX.Element;
+  getButtonClassNamesProps & {
+    render?: (props: { className: string }) => React.ReactElement;
   };
 
 export const Button = (props: ButtonProps) => {
   const { variant = "default", size = "default", render, ...reset } = props;
-
   if (typeof render === "function")
-    return render({ getVariantClx: buttonVariants });
+    return render({ className: getButtonClassNames({ variant, size }) });
 
-  const classNames = buttonVariants({ variant, size });
+  const classNames = getButtonClassNames({ variant, size });
 
   return <button className={classNames} {...reset} />;
 };
