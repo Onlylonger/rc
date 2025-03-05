@@ -30,11 +30,13 @@ export const muteWarningsPlugin = (warningCodes: string[]): Plugin => {
       },
     }),
     closeBundle() {
-      this.warn(
-        "Some of your muted warnings never appeared during the build process:"
-      );
-      for (const [key, item] of mutedMessages) {
-        this.warn(`\t(${key} example): ${item.exMsg}`);
+      if (mutedMessages.size > 0) {
+        this.warn(
+          "Some of your muted warnings never appeared during the build process:"
+        );
+        for (const [key, item] of mutedMessages) {
+          this.warn(`\t(${key} example): ${item.exMsg}`);
+        }
       }
     },
   };

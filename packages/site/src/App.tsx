@@ -1,5 +1,4 @@
 import "./App.css";
-import { AlertDemo } from "./demo/AlertDemo";
 
 import { ButtonDemo } from "./demo/ButtonDemo";
 
@@ -7,7 +6,8 @@ function App() {
   return (
     <div className="Root ">
       <ButtonDemo />
-      <AlertDemo />
+
+      <div className="test">name</div>
     </div>
   );
 }

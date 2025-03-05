@@ -1,11 +1,15 @@
-import { Button, getButtonClassNames } from "@shilong/rc/dev";
-import { ChevronRight, Loader2, MailOpen } from "lucide-react";
+import { Button } from "@shilong/rc/dev";
 
 export const ButtonDemo = () => {
   return (
     <div>
-      <Button>nihao</Button>
-      <Button variant="secondary">Secondary</Button>
+      <Button>
+        {() => {
+          return <div>nihao</div>;
+        }}
+      </Button>
+      <Button>demo</Button>
+      {/* <Button variant="secondary">Secondary</Button>
       <Button variant="destructive">Destructive</Button>
       <Button variant="outline">Outline</Button>
       <Button variant="ghost">Ghost</Button>
@@ -32,7 +36,7 @@ export const ButtonDemo = () => {
             </a>
           );
         }}
-      ></Button>
+      ></Button> */}
     </div>
   );
 };

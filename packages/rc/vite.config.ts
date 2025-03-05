@@ -21,7 +21,7 @@ export default defineConfig({
   build: {
     copyPublicDir: false,
     minify: false,
-    cssMinify: true,
+    cssMinify: false,
     rollupOptions: {
       input: resolve(__dirname, "./src/main.ts"),
       external: [...Object.keys(dependencies), "react/jsx-runtime"],

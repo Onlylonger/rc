@@ -1,30 +1,27 @@
 import { cva, type VariantProps } from "class-variance-authority";
+import { clsx } from "clsx";
 
-export const getButtonClassNames = cva(
-  "inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-[color,box-shadow] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
-  {
-    variants: {
-      variant: {
-        default:
-          "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
-        destructive:
-          "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40",
-        outline:
-          "border border-input bg-background shadow-xs hover:bg-accent hover:text-accent-foreground",
-        secondary:
-          "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
-      },
-      size: {
-        default: "h-9 px-4 py-2 has-[>svg]:px-3",
-        sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
-        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
-        icon: "size-9",
-      },
+import styles from "./index.module.css";
+
+export const getButtonClassNames = cva(styles.Base, {
+  variants: {
+    variant: {
+      default: styles.VariantDefault,
+      destructive: styles.VariantDestructive,
+      outline: styles.VariantOutline,
+      secondary: styles.VariantSecondary,
+      ghost: styles.VariantGhost,
+      link: styles.VariantLink,
     },
-  }
-);
+    size: {
+      default: styles.SizeDefault,
+      sm: styles.SizeSm,
+      lg: styles.SizeLg,
+      icon: styles.SizeIcon,
+    },
+  },
+});
+
 export type ComponentRenderFn<Props, State> = (
   props: Props,
   state: State
@@ -32,17 +29,25 @@ export type ComponentRenderFn<Props, State> = (
 
 type getButtonClassNamesType = typeof getButtonClassNames;
 type getButtonClassNamesProps = VariantProps<getButtonClassNamesType>;
-type ButtonProps = React.ComponentProps<"button"> &
+type ButtonProps = Omit<React.ComponentProps<"button">, "children"> &
   getButtonClassNamesProps & {
-    render?: (props: { className: string }) => React.ReactElement;
+    children?: React.ReactNode | (() => React.ReactNode);
   };
 
 export const Button = (props: ButtonProps) => {
-  const { variant = "default", size = "default", render, ...reset } = props;
-  if (typeof render === "function")
-    return render({ className: getButtonClassNames({ variant, size }) });
+  const {
+    variant = "default",
+    size = "default",
+    className,
+    children,
+    ...reset
+  } = props;
 
-  const classNames = getButtonClassNames({ variant, size });
+  const classNames = clsx(getButtonClassNames({ variant, size }), className);
 
-  return <button className={classNames} {...reset} />;
+  if (typeof children === "function") {
+    return children();
+  }
+
+  return <button className={classNames} {...reset} children={children} />;
 };
