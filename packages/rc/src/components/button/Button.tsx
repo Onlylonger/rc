@@ -1,23 +1,21 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { clsx } from "clsx";
 
-import styles from "./index.module.css";
-
-export const getButtonClassNames = cva(styles.Base, {
+export const getButtonClassNames = cva("Base", {
   variants: {
     variant: {
-      default: styles.VariantDefault,
-      destructive: styles.VariantDestructive,
-      outline: styles.VariantOutline,
-      secondary: styles.VariantSecondary,
-      ghost: styles.VariantGhost,
-      link: styles.VariantLink,
+      default: "VariantDefault",
+      destructive: "VariantDestructive",
+      outline: "VariantOutline",
+      secondary: "VariantSecondary",
+      ghost: "VariantGhost",
+      link: "VariantLink",
     },
     size: {
-      default: styles.SizeDefault,
-      sm: styles.SizeSm,
-      lg: styles.SizeLg,
-      icon: styles.SizeIcon,
+      default: "SizeDefault",
+      sm: "SizeSm",
+      lg: "SizeLg",
+      icon: "SizeIcon",
     },
   },
 });
@@ -31,7 +29,12 @@ type getButtonClassNamesType = typeof getButtonClassNames;
 type getButtonClassNamesProps = VariantProps<getButtonClassNamesType>;
 type ButtonProps = Omit<React.ComponentProps<"button">, "children"> &
   getButtonClassNamesProps & {
-    children?: React.ReactNode | (() => React.ReactNode);
+    children?:
+      | React.ReactNode
+      | ((
+          state?: null,
+          props?: Omit<ButtonProps, "children">
+        ) => React.ReactNode);
   };
 
 export const Button = (props: ButtonProps) => {
@@ -46,7 +49,7 @@ export const Button = (props: ButtonProps) => {
   const classNames = clsx(getButtonClassNames({ variant, size }), className);
 
   if (typeof children === "function") {
-    return children();
+    return children(null, { ...props, className: classNames });
   }
 
   return <button className={classNames} {...reset} children={children} />;
