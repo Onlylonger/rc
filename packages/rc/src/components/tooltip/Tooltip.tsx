@@ -1,50 +1,33 @@
 import {
+  flip,
+  offset,
   safePolygon,
+  shift,
   useFloating,
-  UseFloatingReturn,
   useFocus,
   useHover,
   useInteractions,
-  UseInteractionsReturn,
 } from "@floating-ui/react";
-import { createContext, useContext, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import { TooltipContext, type TooltipContextValue } from "./context";
+import { ChildrenType } from "./type";
 
-export const TooltipContext = createContext<null | State>(null);
-
-export const useTooltipContext = () => {
-  const value = useContext(TooltipContext);
-
-  if (value === null) {
-    throw new Error("Tooltip components must be wrapped in <Tooltip />");
-  }
-
-  return value;
-};
-
-interface State {
-  refs: UseFloatingReturn["refs"];
-  open: boolean;
-  floatingStyles: UseFloatingReturn["floatingStyles"];
-  getFloatingProps: UseInteractionsReturn["getFloatingProps"];
-  getReferenceProps: UseInteractionsReturn["getReferenceProps"];
+export interface ToolTipProps {
+  children: ChildrenType<TooltipChildParams>;
 }
 
-type ChildParams = {
-  open: State["open"];
+export interface TooltipChildParams {
+  open: TooltipContextValue["open"];
   referenceProps: {
-    ref: State["refs"]["setReference"];
-  } & ReturnType<State["getReferenceProps"]>;
+    ref: TooltipContextValue["refs"]["setReference"];
+  } & ReturnType<TooltipContextValue["getReferenceProps"]>;
   floatingProps: {
-    style: State["floatingStyles"];
-    ref: State["refs"]["setFloating"];
-  } & ReturnType<State["getFloatingProps"]>;
-};
+    style: TooltipContextValue["floatingStyles"];
+    ref: TooltipContextValue["refs"]["setFloating"];
+  } & ReturnType<TooltipContextValue["getFloatingProps"]>;
+}
 
-export const Tooltip = (props: {
-  children:
-    | React.ReactNode
-    | ((state: ChildParams, props?: object) => React.ReactNode);
-}) => {
+export const Tooltip = (props: ToolTipProps) => {
   const { children } = props;
 
   const [open, setOpen] = useState(false);
@@ -53,6 +36,7 @@ export const Tooltip = (props: {
     onOpenChange(open) {
       setOpen(open);
     },
+    middleware: [offset(5), shift(), flip()],
   });
 
   const hoverEffect = useHover(context, {
@@ -77,7 +61,7 @@ export const Tooltip = (props: {
   );
 
   if (typeof children === "function") {
-    return children({
+    const childrenParams = {
       open,
       referenceProps: {
         ref: refs.setReference,
@@ -88,34 +72,11 @@ export const Tooltip = (props: {
         ref: refs.setFloating,
         ...getFloatingProps(),
       },
-    });
+    };
+    return children(childrenParams);
   }
 
-  return <TooltipContext value={value}>{children}</TooltipContext>;
-};
-
-export const TooltipTrigger = (props: { children: React.ReactNode }) => {
-  const { children } = props;
-
-  const { refs, getReferenceProps } = useTooltipContext();
-
   return (
-    <button ref={refs.setReference} {...getReferenceProps()}>
-      {children}
-    </button>
-  );
-};
-
-export const TooltipContent = (props: { children: React.ReactNode }) => {
-  const { children } = props;
-
-  const { refs, getFloatingProps, floatingStyles, open } = useTooltipContext();
-
-  if (!open) return null;
-
-  return (
-    <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()}>
-      {children}
-    </div>
+    <TooltipContext.Provider value={value}>{children}</TooltipContext.Provider>
   );
 };
