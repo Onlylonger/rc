@@ -1,21 +1,22 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { clsx } from "clsx";
+import { styles } from "./style";
 
-export const getButtonClassNames = cva("Base", {
+export const getButtonClassNames = cva(styles.base, {
   variants: {
     variant: {
-      default: "VariantDefault",
-      destructive: "VariantDestructive",
-      outline: "VariantOutline",
-      secondary: "VariantSecondary",
-      ghost: "VariantGhost",
-      link: "VariantLink",
+      default: styles.variantDefault,
+      destructive: styles.variantDestructive,
+      outline: styles.variantOutline,
+      secondary: styles.variantSecondary,
+      ghost: styles.variantGhost,
+      link: styles.variantLink,
     },
     size: {
-      default: "SizeDefault",
-      sm: "SizeSm",
-      lg: "SizeLg",
-      icon: "SizeIcon",
+      default: styles.sizeDefault,
+      sm: styles.sizeSm,
+      lg: styles.sizeLg,
+      icon: styles.sizeIcon,
     },
   },
 });
