@@ -1,29 +1,32 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { clsx } from "clsx";
-import { styles } from "./style";
 
-export const getButtonClassNames = cva(styles.base, {
-  variants: {
-    variant: {
-      default: styles.variantDefault,
-      destructive: styles.variantDestructive,
-      outline: styles.variantOutline,
-      secondary: styles.variantSecondary,
-      ghost: styles.variantGhost,
-      link: styles.variantLink,
-    },
-    size: {
-      default: styles.sizeDefault,
-      sm: styles.sizeSm,
-      lg: styles.sizeLg,
-      icon: styles.sizeIcon,
+export const getButtonClassNames = cva(
+  "inline-flex cursor-pointer items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap",
+  {
+    variants: {
+      variant: {
+        default:
+          "bg-primary text-primary-foreground hover:bg-primary/90 shadow-xs",
+        destructive: "",
+        outline: "",
+        secondary: "",
+        ghost: "",
+        link: "",
+      },
+      size: {
+        default: "h-9 px-4 py-2",
+        sm: "",
+        lg: "",
+        icon: "",
+      },
     },
   },
-});
+);
 
 export type ComponentRenderFn<Props, State> = (
   props: Props,
-  state: State
+  state: State,
 ) => React.ReactElement<unknown>;
 
 type getButtonClassNamesType = typeof getButtonClassNames;
@@ -34,7 +37,7 @@ type ButtonProps = Omit<React.ComponentProps<"button">, "children"> &
       | React.ReactNode
       | ((
           state?: null,
-          props?: Omit<ButtonProps, "children">
+          props?: Omit<ButtonProps, "children">,
         ) => React.ReactNode);
   };
 
