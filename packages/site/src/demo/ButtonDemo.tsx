@@ -1,4 +1,4 @@
-import { Button } from "@shilong/rc/dev";
+import { Button, Toaster } from "@shilong/rc/dev";
 
 export const ButtonDemo = () => {
   return (
@@ -9,6 +9,8 @@ export const ButtonDemo = () => {
       <Button variant="outline">Outline</Button>
       <Button variant="ghost">Ghost</Button>
       <Button variant="link">Link</Button>
+      <Toaster />
+
       {/* <Button variant="outline" size="icon">
         <ChevronRight />
       </Button>
