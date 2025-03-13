@@ -1,14 +1,22 @@
-import { Button, AppBar, Toaster, toast } from "@shilong/rc/dev";
+import { dialog, AppBar, Dialoger } from "@shilong/rc/dev";
 import "./App.css";
 import { ButtonDemo } from "./demo/ButtonDemo";
 
 function App() {
   return (
     <div className="">
-      <button onClick={() => toast("nihao")}>click</button>
+      <button
+        onClick={() =>
+          dialog({
+            title: "hehe",
+          })
+        }
+      >
+        click
+      </button>
       <ButtonDemo />
       <AppBar />
-      <Toaster />
+      <Dialoger />
       <p>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis,
         animi porro a pariatur quisquam iste! Quibusdam, quaerat! Commodi
