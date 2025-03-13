@@ -22,8 +22,15 @@
       "import": "./dist/es/main.js",
       "types": "./dist/es/main.d.ts"
     },
+    "./icons": {
+      "import": "./dist/es/icons/index.js",
+      "types": "./dist/es/icons/index.d.ts"
+    },
     "./dev": {
-      "import": "./src/main.js"
+      "import": "./src/main.ts"
+    },
+    "./dev/icons": {
+      "import": "./src/icons/index.ts"
     },
     "./dev/style.css": "./src/style.css",
     "./style.css": "./dist/es/style.css"
@@ -52,6 +59,7 @@
     "@floating-ui/react": "^0.27.5",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "lucide-react": "^0.476.0",
     "sonner": "^2.0.1"
   },
   "devDependencies": {
