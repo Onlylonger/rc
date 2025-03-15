@@ -1,23 +1,10 @@
-import { dialog, AppBar, Dialoger } from "@shilong/rc/dev";
-import { Camera } from "@shilong/rc/dev/icons";
+import { AppBar, Dialoger } from "@shilong/rc/dev";
 
 import "./App.css";
-import { ButtonDemo } from "./demo/ButtonDemo";
 
 function App() {
   return (
     <div className="">
-      <Camera color="red" size={48} />
-      <button
-        onClick={() =>
-          dialog({
-            title: "hehe",
-          })
-        }
-      >
-        click
-      </button>
-      <ButtonDemo />
       <AppBar />
       <Dialoger />
       <p>
