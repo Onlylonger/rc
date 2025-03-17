@@ -1,44 +1,26 @@
 import { WithLinkButton } from "../../layout/app/WithLinkButton";
+import blogsList from "virtual:scan-list";
+
+console.log(blogsList);
 
 const List = () => {
-  const list = [
-    {
-      year: 2024,
-      blogs: [
-        {
-          title: "Utils · classNames",
-          desc: "",
-        },
-        {
-          title: "Utils · classVariance",
-          desc: "",
-        },
-        {
-          title: "Hooks · usePrevious & useCompareEffect",
-          desc: "",
-        },
-        {
-          title: "Hooks · useRequest",
-          desc: "",
-        },
-      ],
-    },
-  ];
-
   return (
     <div>
-      {list.map((v) => {
-        const haveBlogs = v.blogs.length > 0;
+      {blogsList.map((v) => {
+        if (!v.children) return;
+        const haveBlogs = v.children.length > 0;
 
         return (
-          <section>
-            <h2>{v.year}</h2>
+          <section key={v.name}>
+            <h2>{v.name}</h2>
             {haveBlogs && (
               <ul>
-                {v.blogs.map((blog) => (
-                  <li>
-                    <WithLinkButton to={`./${blog.title}`}>
-                      {blog.title}
+                {v.children.map((blog) => (
+                  <li key={blog.name}>
+                    <WithLinkButton
+                      to={`./${v.name}/${blog.name.split(".")[0]}`}
+                    >
+                      {blog.frontmatter?.title || blog.name.split(".")[0]}
                     </WithLinkButton>
                   </li>
                 ))}
