@@ -1,8 +1,25 @@
 // vite-plugin-scan-list.js
-import fs from "fs/promises";
 import path from "path";
 import matter from "gray-matter"; // 需要安装 gray-matter
 import { Plugin } from "vite";
+import { readdirSync, readFileSync, statSync } from "fs";
+
+type FileItem = Omit<DirectoryItem, "children"> & {
+  ext: string;
+  frontmatter: {
+    [key: string]: unknown;
+  };
+  createTime: number;
+  updateTime: number;
+  content?: string;
+};
+
+interface DirectoryItem {
+  name: string;
+  type: "file" | "directory";
+  path: string;
+  children: FileItem[];
+}
 
 export const scanList: (options?: {
   targetDir?: string;
@@ -11,123 +28,97 @@ export const scanList: (options?: {
   cacheTTL?: number; // 3秒缓存
   sortBy?: string;
   sortOrder?: string;
+  includeContent?: boolean;
 }) => Plugin = (options = {}) => {
   const {
     targetDir = "src/pages/blog-detail",
     virtualModuleId = "virtual:scan-list",
     extensions = [".md", ".mdx"],
     cacheTTL = 3000, // 3秒缓存
-    // 新增排序配置
-    sortBy = "createTime", // 可选: 'createTime' | 'updateTime' | 'frontmatter.date'
-    sortOrder = "desc", // 可选: 'asc' | 'desc'
   } = options;
 
-  let cache = null;
+  let cache: DirectoryItem[] | null = null;
   let lastScan = 0;
 
   // 带缓存的异步扫描
-  async function scanDirWithCache(dir) {
+  function scanDirWithCache(dir: string) {
     const now = Date.now();
     if (cache && now - lastScan < cacheTTL) {
       return cache;
     }
 
-    const rawData = await scanDir(dir);
+    const rawData = scanDir(dir);
     const processedData = processSort(rawData);
     cache = processedData;
     lastScan = now;
     return processedData;
   }
 
-  // 递归扫描目录（异步版本）
-  async function scanDir(dir: string) {
+  function scanDir(dir: string) {
     try {
-      const entries = await fs.readdir(dir, { withFileTypes: true });
+      const entries = readdirSync(dir, { withFileTypes: true });
 
-      return Promise.all(
-        entries.map(async (entry) => {
-          if (entry.name.startsWith(".")) return null; // 忽略隐藏文件
+      const list = [];
 
-          const entryPath = path.join(dir, entry.name);
-          const isTargetExt = extensions.includes(path.extname(entry.name));
+      for (const file of entries) {
+        if (file.name.startsWith(".")) return;
+        if (file.isDirectory()) {
+          const filePath = path.join(file.parentPath, file.name);
 
-          // 在路径处理中添加校验
-          if (!entryPath.startsWith(process.cwd())) {
-            throw new Error("非法路径访问");
-          }
+          const mdList = readdirSync(filePath, {
+            withFileTypes: true,
+          })
+            .filter(
+              (v) => v.isFile() && extensions.includes(path.extname(v.name)),
+            )
+            .map((v) => {
+              const vPath = path.join(v.parentPath, v.name);
+              const content = readFileSync(vPath, "utf-8");
+              const { data: frontmatter } = matter(content);
+              const stats = statSync(vPath);
+              return {
+                name: v.name,
+                type: "file" as const,
+                path: vPath,
+                ext: path.extname(v.name),
+                frontmatter,
+                createTime: stats.birthtimeMs,
+                updateTime: stats.mtimeMs,
+                content: options.includeContent ? content : undefined,
+              };
+            });
 
-          if (entry.isDirectory()) {
-            return {
-              name: entry.name,
-              type: "directory",
-              path: entryPath,
-              children: await scanDir(entryPath),
-            };
-          } else if (entry.isFile() && isTargetExt) {
-            const content = await fs.readFile(entryPath, "utf-8");
-            const { data: frontmatter } = matter(content);
-            const stats = await fs.stat(entryPath);
+          list.push({
+            name: file.name,
+            type: "directory" as const,
+            path: filePath,
+            children: mdList,
+          });
+        }
+      }
 
-            return {
-              name: entry.name,
-              type: "file",
-              path: entryPath,
-              ext: path.extname(entry.name),
-              frontmatter,
-              createTime: stats.birthtimeMs,
-              updateTime: stats.mtimeMs,
-              content: options.includeContent ? content : undefined,
-            };
-          }
-          return null;
-        }),
-      );
+      console.log(list);
+      return list;
     } catch (error) {
       console.error(`Scan error in ${dir}:`, error);
       return [];
     }
   }
 
-  // 递归排序处理器（新增核心功能）
-  function processSort(nodes) {
-    const sortFn = (a, b) => {
-      let valueA, valueB;
-
-      switch (sortBy) {
-        case "createTime":
-          valueA = a.createTime;
-          valueB = b.createTime;
-          break;
-        case "updateTime":
-          valueA = a.updateTime;
-          valueB = b.updateTime;
-          break;
-        case "frontmatter.date":
-          valueA = new Date(a.frontmatter?.date || 0);
-          valueB = new Date(b.frontmatter?.date || 0);
-          break;
-        default:
-          valueA = valueB = 0;
-      }
-
-      return sortOrder === "asc" ? valueA - valueB : valueB - valueA;
-    };
-
+  function processSort(nodes: DirectoryItem[] = []) {
     return nodes
-      .filter(Boolean)
       .map((node) => {
-        if (node.children) {
-          return {
-            ...node,
-            children: processSort(node.children),
-          };
-        }
-        return node;
+        return {
+          ...node,
+          children: node.children.sort((a, b) => b.createTime - a.createTime),
+        };
       })
       .sort((a, b) => {
-        if (a.type === "directory" && b.type !== "directory") return -1;
-        if (b.type === "directory" && a.type !== "directory") return 1;
-        return sortFn(a, b);
+        const aMatch = a.name.match(/\d+/) ?? ["0"];
+        const bMatch = b.name.match(/\d+/) ?? ["0"];
+        const numA = parseInt(aMatch[0], 10);
+        const numB = parseInt(bMatch[0], 10);
+        return numB - numA;
       });
   }
 
@@ -160,8 +151,11 @@ export const scanList: (options?: {
 
     async load(id) {
       if (id === virtualModuleId) {
+        console.time();
+
         const absoluteDir = path.resolve(process.cwd(), targetDir);
-        const dirData = await scanDirWithCache(absoluteDir);
+        const dirData = scanDirWithCache(absoluteDir);
+        console.timeEnd();
         return `export default ${JSON.stringify(dirData.filter(Boolean))}`;
       }
     },

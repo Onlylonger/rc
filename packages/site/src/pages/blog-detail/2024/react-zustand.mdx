@@ -1,0 +1,118 @@
+---
+title: React 状态管理库 · Zustand
+layout: blog
+---
+
+import WithoutSelector from "./demo/self-zustand/index.jsx";
+import NormalUsage from "./demo/normal/index.jsx";
+import InitFrame from "./demo/frame/index.jsx";
+
+# React 状态管理库 · Zustand
+
+## 起因
+
+工作对接中旧有项目使用了`zustand`这个状态管理库，为了增加 对这个库的了解，我们来一步步还原它的核心功能。
+
+## 使用
+
+我们先使用`zustand`这个库，以下为本次需要实现的例子 🌰
+
+以上使用`zustand`的 `create Api`， 同时用了 `selectors` 进行 `Render Optimization`。
+
+### 结果展示
+
+<NormalUsage />
+
+可以尝试点击按钮，查阅调试器(Devltools Console 窗口)初始化渲染会输出 `Zustand ClickButton render` 和 `Zustand CountCountry render`。如果未使用 `selectors`， 则该 `counterStore` 任意更新，都会触发调用该 `hooks` 的组件重新渲染。
+
+因为当前示例使用了 `selectors` ，所以当我们更新 `counterStore`的具体值的时候， 只有被引用的组件才会被重新渲染。
+
+::: warning
+`selectors` 的使用方式需要返回具体的属性，如果返回的是对象，并不会进行 `Render Optimization`。 例如以下代码：
+
+```jsx
+const { country, updateCountry } = useCounter((state) => ({
+  country: state.country,
+  updateCountry: state.updateCountry,
+}));
+```
+
+如果想减少 `zustand selectors` 的写法，官方也有建议方式，[Auto Generating Selectors](https://docs.pmnd.rs/zustand/guides/auto-generating-selectors)
+:::
+
+## 思路
+
+让我们一起梳理下使用流程
+
+![mind](../assets/zustand.png)
+
+## 实现
+
+根据以上使用逻辑以及参考源码，我们从 `Plain Usage` 和 `React Hooks Usage`
+
+### Plain Usage
+
+我们先实现 Plain Usage 的场景，代码如下：
+
+#### 结果展示
+
+如上述代码所示，当只使用 订阅 模式监听数据变化，我们也可以简单实现 视图 响应效果。
+
+<InitFrame />
+
+### React Hooks Usage
+
+如何实现 `const count = useHookStore(state => state.count)` 的效果呢？
+
+这里主要涉及到一个 `Api` 叫做 [useSyncExternalStore](https://react.dev/reference/react/useSyncExternalStore)，我们重新实现处理下，代码如下：
+
+#### 结果展示
+
+<WithoutSelector />
+
+::: warning
+
+以上已经达到了类似 `Render Optimization` 的效果，但是还是会有些问题，大家可以自行尝试下以下使用方式:
+
+```js
+const { count, increaseCount } = useCounter((state) => ({
+  count: state.count,
+  increaseCount: state.increaseCount,
+}));
+```
+
+上述问题是 返回值不是一个具体字段，而是一个对象的原因造成的。[useMutableSource → useSyncExternalStore](https://github.com/reactwg/react-18/discussions/86) 中，提及到 `inline getSnapshot`使用方式如下.
+
+```js
+// Selecting a specific field using an inline getSnapshot
+const selectedField = useSyncExternalStore(
+  store.subscribe,
+  () => store.getSnapshot().selectedField,
+);
+```
+
+:::
+
+官方为了方便起见其实也提供了另外一个包 [use-sync-external-store](https://www.npmjs.com/package/use-sync-external-store)这个包。
+
+> As a convenience, we will provide a version of the API with automatic support for memoizing the result of getSnapshot:
+
+```js
+// Name of API is not final
+import { useSyncExternalStoreWithSelector } from "use-sync-external-store/with-selector";
+const selection = useSyncExternalStoreWithSelector(
+  store.subscribe,
+  store.getSnapshot,
+  getServerSnapshot,
+  selector,
+  isEqual,
+);
+```
+
+`zustand`也是使用了这个包。`useSyncExternalStoreWithSelector` 内部调用了 `useSyncExternalStore` 方法，只是再对 `getSnnapshot` 做了些额外优化处理，有需要了解可自行再去浏览源码。
+
+## 优缺点
+
+| 方案    | 优点                                                                                                                                                                                  | 缺点                                                                                                                                                                          |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| zustand | 相较于 context 使用更简单，而且适用于 `many components throughout the tree`，可以看这个 [RFCS](https://github.com/reactjs/rfcs/blob/main/text/0147-use-mutable-source.md#context-api) | 目前 selector 只支持具体某个属性，手动写会比较繁琐，需要再提供个 `helper function` [Auto Generating Selectors](https://docs.pmnd.rs/zustand/guides/auto-generating-selectors) |
