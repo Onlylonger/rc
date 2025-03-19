@@ -3,9 +3,13 @@ title: React 状态管理库 · Zustand
 layout: blog
 ---
 
-import WithoutSelector from "./demo/self-zustand/index.jsx";
-import NormalUsage from "./demo/normal/index.jsx";
-import InitFrame from "./demo/frame/index.jsx";
+import {
+  FrameDemo,
+  NormalDemo,
+  WithoutSelectorDemo,
+} from "./demo/react-zustand";
+import ZustandPNG from "./assets/zustand.png";
+import { Image } from "@blogs/Image";
 
 # React 状态管理库 · Zustand
 
@@ -19,9 +23,7 @@ import InitFrame from "./demo/frame/index.jsx";
 
 以上使用`zustand`的 `create Api`， 同时用了 `selectors` 进行 `Render Optimization`。
 
-### 结果展示
-
-<NormalUsage />
+<NormalDemo />
 
 可以尝试点击按钮，查阅调试器(Devltools Console 窗口)初始化渲染会输出 `Zustand ClickButton render` 和 `Zustand CountCountry render`。如果未使用 `selectors`， 则该 `counterStore` 任意更新，都会触发调用该 `hooks` 的组件重新渲染。
 
@@ -44,7 +46,7 @@ const { country, updateCountry } = useCounter((state) => ({
 
 让我们一起梳理下使用流程
 
-![mind](../assets/zustand.png)
+<Image src={ZustandPNG} />
 
 ## 实现
 
@@ -54,11 +56,9 @@ const { country, updateCountry } = useCounter((state) => ({
 
 我们先实现 Plain Usage 的场景，代码如下：
 
-#### 结果展示
-
 如上述代码所示，当只使用 订阅 模式监听数据变化，我们也可以简单实现 视图 响应效果。
 
-<InitFrame />
+<FrameDemo />
 
 ### React Hooks Usage
 
@@ -66,9 +66,7 @@ const { country, updateCountry } = useCounter((state) => ({
 
 这里主要涉及到一个 `Api` 叫做 [useSyncExternalStore](https://react.dev/reference/react/useSyncExternalStore)，我们重新实现处理下，代码如下：
 
-#### 结果展示
-
-<WithoutSelector />
+<WithoutSelectorDemo />
 
 ::: warning
 

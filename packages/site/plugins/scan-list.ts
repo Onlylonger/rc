@@ -97,7 +97,6 @@ export const scanList: (options?: {
         }
       }
 
-      console.log(list);
       return list;
     } catch (error) {
       console.error(`Scan error in ${dir}:`, error);

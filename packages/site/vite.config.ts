@@ -5,6 +5,7 @@ import { scanList } from "./plugins/scan-list";
 import mdx from "@mdx-js/rollup";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkGfm from "remark-gfm";
+import path from "path";
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -20,6 +21,12 @@ export default defineConfig({
     tailwindcss(),
     scanList(),
   ],
+  resolve: {
+    alias: {
+      "@": path.join(__dirname, "./src"),
+      "@blogs": path.join(__dirname, "./src/pages/blog-detail"),
+    },
+  },
   build: {
     outDir: "output",
   },
