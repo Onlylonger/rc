@@ -20,6 +20,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@codesandbox/sandpack-react": "^2.20.0",
     "@shilong/rc": "workspace:^",
     "lucide-react": "^0.476.0",
     "prism-react-renderer": "^2.4.1",

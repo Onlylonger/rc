@@ -1,4 +1,5 @@
 import { DemoBlock } from "@blogs/DemoBlock";
+import { Sandpack } from "@codesandbox/sandpack-react";
 
 import Frame from "./frame";
 import frameCode from "./frame?raw";
@@ -24,3 +25,14 @@ export const WithoutSelectorDemo = () => (
     <WithoutSelector />
   </DemoBlock>
 );
+
+export const SanDemo = () => {
+  return (
+    <Sandpack
+      template="vite-react-ts"
+      files={{
+        "/App.tsx": frameCode,
+      }}
+    />
+  );
+};
